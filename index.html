@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>广州地铁随机探索</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#667eea">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="地铁探索">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🚇 广州地铁随机探索</h1>
+      <p>周末休闲好去处 · 随机发现身边的精彩</p>
+    </div>
+
+    <div class="panel">
+      <div class="stats">
+        <div class="stat-item">
+          <div class="stat-value" id="totalStations">0</div>
+          <div class="stat-label">总站点数</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="visitedCount">0</div>
+          <div class="stat-label">已探索</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="favoriteCount">0</div>
+          <div class="stat-label">已收藏</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="remainingCount">0</div>
+          <div class="stat-label">待探索</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">🎲 随机选站</div>
+      <div class="filter-row" style="margin-bottom: 16px;">
+        <span class="filter-label">出发站：</span>
+        <select id="originSelect" style="flex: 1; max-width: 300px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;"></select>
+      </div>
+      <div class="random-card" id="randomCard">
+        <div class="empty-tip">点击下方按钮，开始你的随机探索之旅！</div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" id="randomBtn">🎲 随机抽一个</button>
+        <button class="btn btn-success" id="recordBtn" style="display:none;">📝 记录此次</button>
+        <button class="btn btn-warning" id="favoriteBtn" style="display:none;">⭐ 收藏</button>
+      </div>
+      <div class="route-info" id="routeInfo" style="display:none;"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">⚙️ 筛选条件</div>
+      <div class="filters">
+        <div class="filter-row">
+          <label class="filter-label">
+            <input type="checkbox" id="excludeVisited" checked>
+            排除已去过
+          </label>
+          <label class="filter-label">
+            <input type="checkbox" id="excludeFavorite">
+            排除已收藏
+          </label>
+        </div>
+        <div class="filter-row">
+          <span class="filter-label">线路范围：</span>
+          <button class="btn btn-sm" id="selectAllLines">全选</button>
+          <button class="btn btn-sm" id="clearLines">清空</button>
+        </div>
+        <div class="checkbox-group" id="lineFilters"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="tabs">
+        <div class="tab active" data-tab="records">📋 探索记录</div>
+        <div class="tab" data-tab="favorites">⭐ 收藏列表</div>
+        <div class="tab" data-tab="all">🗺️ 全部站点</div>
+      </div>
+
+      <div class="tab-content active" id="tab-records">
+        <div class="btn-group" style="justify-content: flex-start; margin-top: 0; margin-bottom: 16px;">
+          <button class="btn btn-success" id="exportBtn">📤 导出CSV</button>
+          <button class="btn btn-primary" id="importBtn">📥 导入CSV</button>
+          <input type="file" id="importFile" accept=".csv" style="display:none;">
+        </div>
+        <div class="records-list" id="recordsList"></div>
+      </div>
+
+      <div class="tab-content" id="tab-favorites">
+        <div class="records-list" id="favoritesList"></div>
+      </div>
+
+      <div class="tab-content" id="tab-all">
+        <div class="filter-row" style="margin-bottom: 12px;">
+          <input type="text" class="form-control" id="searchInput" placeholder="搜索站点名..." style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px;">
+        </div>
+        <div class="records-list" id="allStationsList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="recordModal">
+    <div class="modal">
+      <div class="modal-title" id="modalTitle">📝 添加探索记录</div>
+      <div class="form-group">
+        <label>站点</label>
+        <input type="text" id="recordStation" readonly>
+      </div>
+      <div class="form-group">
+        <label>所属线路</label>
+        <input type="text" id="recordLine" readonly>
+      </div>
+      <div class="form-group">
+        <label>探索日期</label>
+        <input type="date" id="recordDate">
+      </div>
+      <div class="form-group">
+        <label>探索笔记</label>
+        <textarea id="recordNote" placeholder="记录下你的探索体验..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="cancelRecord">取消</button>
+        <button class="btn btn-primary" id="saveRecord">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="data.js"></script>
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
